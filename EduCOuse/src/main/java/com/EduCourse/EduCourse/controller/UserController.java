@@ -1,6 +1,13 @@
 package com.EduCourse.EduCourse.controller;
 
+import com.EduCourse.EduCourse.Entity.UserEntity;
 import com.EduCourse.EduCourse.dto.LoginRequest;
+import com.EduCourse.EduCourse.dto.LoginResponse;
+import com.EduCourse.EduCourse.dto.SignupRequest;
+import com.EduCourse.EduCourse.service.UserService;
+import com.EduCourse.EduCourse.util.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,18 +17,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/insertuser")
+    public boolean insertuser(@RequestBody SignupRequest signupRequest) {
+        boolean response = userService.insertuser(signupRequest);
+        if (response) {
+            System.out.println("The user with email : " + signupRequest.getEmail() + "has been created ");
+        } else {
+            System.out.println("Error creating user with email : " + signupRequest.getEmail());
+        }
+        return response;
+    }
+
+
+
+
    @PostMapping("/userlogin")
-   public void userlogin(@RequestBody LoginRequest loginRequest){
+   public ResponseEntity<?> userlogin(@RequestBody LoginRequest loginRequest){
        String email = loginRequest.getEmail();
-       if(email == null ){
-           System.out.println("Error : Email is missing ");
-       }
        String password = loginRequest.getPassword();
-       if(password == null ){
-           System.out.println("Error : Password is missing ");
+       try {
+           UserEntity data = userService.userlogin(email,password);
+           if(data != null ){
+               String token = JwtTokenUtil.generateToken(email);
+               return ResponseEntity.ok(new LoginResponse(token));
+           }
+           return ResponseEntity.status(404).body("Error: User Doesn't Exists");
+       } catch (Exception e) {
+           return ResponseEntity.status(404).body("Error: Login failed due to Expection ");
        }
-
-
-
    }
 }
