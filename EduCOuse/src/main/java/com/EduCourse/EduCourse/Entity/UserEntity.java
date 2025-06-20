@@ -8,12 +8,13 @@ import lombok.Data;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    private Long id;
+    @Column(name = "userid")
+    private Long userid;
 
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastName;
 
     @Column(name = "email", unique = true)

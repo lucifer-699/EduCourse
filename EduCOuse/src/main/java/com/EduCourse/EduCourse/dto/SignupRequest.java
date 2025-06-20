@@ -9,5 +9,5 @@ public class SignupRequest {
     String lastName;
     String email;
     String password;
-    String roles;
+    String role;
 }

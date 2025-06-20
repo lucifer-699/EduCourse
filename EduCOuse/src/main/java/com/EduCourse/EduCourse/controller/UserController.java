@@ -31,15 +31,13 @@ public class UserController {
         return response;
     }
 
-
-
-
    @PostMapping("/userlogin")
    public ResponseEntity<?> userlogin(@RequestBody LoginRequest loginRequest){
        String email = loginRequest.getEmail();
        String password = loginRequest.getPassword();
+       String role = "user";
        try {
-           UserEntity data = userService.userlogin(email,password);
+           UserEntity data = userService.login(email,password,role);
            if(data != null ){
                String token = JwtTokenUtil.generateToken(email);
                return ResponseEntity.ok(new LoginResponse(token));
@@ -49,4 +47,21 @@ public class UserController {
            return ResponseEntity.status(404).body("Error: Login failed due to Expection ");
        }
    }
+
+    @PostMapping("/adminlogin")
+    public ResponseEntity<?> adminlogin(@RequestBody LoginRequest loginRequest){
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+        String role = "admin";
+        try {
+            UserEntity data = userService.login(email,password,role);
+            if(data != null ){
+                String token = JwtTokenUtil.generateToken(email);
+                return ResponseEntity.ok(new LoginResponse(token));
+            }
+            return ResponseEntity.status(404).body("Error: User Doesn't Exists Or Invalid credentials for admin");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: Login failed due to Expection ");
+        }
+    }
 }

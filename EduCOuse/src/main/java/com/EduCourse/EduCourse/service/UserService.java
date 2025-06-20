@@ -17,12 +17,12 @@ public class UserService {
         String lastName = request.getLastName();
         String email = request.getEmail();
         String password = request.getPassword();
-        String roles = request.getRoles();
-
+        String role = request.getRole();
         try {
-            UserEntity user = userRepository.user();
-            if (user != null ){
-                System.out.println("The user with email :" + user.getEmail() + " and role : " +user.getRole() +"has been created");
+            Boolean user = userRepository.insertuser(firstName,lastName,email,password,role);
+            System.out.println("response : " +user);
+            if (user){
+                System.out.println("The user with email :" + email + " and role : " + role +"has been created");
                 return true;
         }else{
                 return false;
@@ -32,9 +32,9 @@ public class UserService {
         }
     }
 
-    public UserEntity userlogin(String email, String password){
+    public UserEntity login(String email, String password, String role){
         try {
-            UserEntity user = userRepository.userlogin(email,password);
+            UserEntity user = userRepository.login(email,password,role);
             if(user!= null){
                 System.out.println("User with email : " +email +"has logged in ");
                 return user;
