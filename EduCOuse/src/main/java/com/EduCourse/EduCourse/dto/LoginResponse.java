@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class LoginResponse {
     private String token;
-    public LoginResponse(String token){
+    private String role;
+    public LoginResponse(String token, String role){
         this.token = token;
+        this.role = role;
     }
 }

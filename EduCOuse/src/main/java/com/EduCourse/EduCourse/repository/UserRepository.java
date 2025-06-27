@@ -9,10 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity,String> {
 
-    @Query(value = "select userid,firstname,lastname ,email,password,role from users where email = :email and password = :password and role = :role ;",nativeQuery = true)
+    @Query(value = "select userid,firstname,lastname ,email,password,role from users where email = :email and password = :password;",nativeQuery = true)
     public UserEntity login(@Param("email") String email,
-                            @Param("password") String password,
-                            @Param("role") String role);
+                            @Param("password") String password);
 
     @Query (value = "select * from public.insert_user(:firstName, :lastName,:email,:password,:role);",nativeQuery = true)
     Boolean insertuser(@Param("firstName") String firstName,

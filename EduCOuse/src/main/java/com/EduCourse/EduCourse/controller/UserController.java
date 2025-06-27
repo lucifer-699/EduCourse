@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+
 
     @PostMapping("/insertuser")
     public boolean insertuser(@RequestBody SignupRequest signupRequest) {
@@ -31,37 +33,30 @@ public class UserController {
         return response;
     }
 
-   @PostMapping("/userlogin")
-   public ResponseEntity<?> userlogin(@RequestBody LoginRequest loginRequest){
+
+    @PostMapping("/login")
+   public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
        String email = loginRequest.getEmail();
        String password = loginRequest.getPassword();
-       String role = "user";
+       System.out.println("Login Request from "+ email +"and pass :" +password);
+
        try {
-           UserEntity data = userService.login(email,password,role);
-           if(data != null ){
+           UserEntity data = userService.login(email,password);
+           System.out.println(data);
+
+           if(data != null){
+               String role = data.getRole();
                String token = JwtTokenUtil.generateToken(email);
-               return ResponseEntity.ok(new LoginResponse(token));
+               System.out.println("Login Sucessfull with token :" + token);
+               return ResponseEntity.ok(new LoginResponse(token,role));
+           }else {
+               System.out.println("User Doesnt Exists");
+               return ResponseEntity.status(401).body("Failed");
            }
-           return ResponseEntity.status(404).body("Error: User Doesn't Exists");
        } catch (Exception e) {
-           return ResponseEntity.status(404).body("Error: Login failed due to Expection ");
+           System.out.println("Error occur !!");
+           return ResponseEntity.status(404).body("Error");
        }
    }
 
-    @PostMapping("/adminlogin")
-    public ResponseEntity<?> adminlogin(@RequestBody LoginRequest loginRequest){
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
-        String role = "admin";
-        try {
-            UserEntity data = userService.login(email,password,role);
-            if(data != null ){
-                String token = JwtTokenUtil.generateToken(email);
-                return ResponseEntity.ok(new LoginResponse(token));
-            }
-            return ResponseEntity.status(404).body("Error: User Doesn't Exists Or Invalid credentials for admin");
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body("Error: Login failed due to Expection ");
-        }
-    }
 }

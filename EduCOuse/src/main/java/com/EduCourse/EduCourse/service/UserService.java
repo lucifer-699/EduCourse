@@ -32,9 +32,9 @@ public class UserService {
         }
     }
 
-    public UserEntity login(String email, String password, String role){
+    public UserEntity login(String email, String password){
         try {
-            UserEntity user = userRepository.login(email,password,role);
+            UserEntity user = userRepository.login(email,password);
             if(user!= null){
                 System.out.println("User with email : " +email +"has logged in ");
                 return user;
